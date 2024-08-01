@@ -24,7 +24,7 @@
 // // eslint-disable-next-line prettier/prettier
 export type {FieldFormatter} from './data-utils';
 export * from './data-utils';
-// export {getTimelineFromAnimationConfig, getTimelineFromFilter, SAMPLE_TIMELINE, TIMELINE_MODES} from './time';
+export {getTimelineFromAnimationConfig, getTimelineFromFilter, SAMPLE_TIMELINE, TIMELINE_MODES} from './time';
 //
 // export {
 //   datasetColorMaker,
@@ -93,7 +93,7 @@ export {snapToMarks} from './plot';
 // export type { DataContainerInterface } from './data-container-interface';
 // export {ArrowDataContainer, arrowDataTypeToFieldType, arrowDataTypeToAnalyzerDataType} from './arrow-data-container';
 // export type {FilterResult, FilterChanged, dataValueAccessor} from './filter-utils'
-// export * from "./filter-utils";
+export * from "./filter-utils";
 //
 // export {
 //   getQuantileDomain,

@@ -35,6 +35,8 @@ const TimeWidget: React.FC<TimeWidgetProps> = ({
                                                }: TimeWidgetProps) => {
   // const [isMinified, setMinified] = useState(false);
 
+    console.log("timeline", timeline)
+
   const _updateAnimationSpeed = useCallback((speed: number) => updateAnimationSpeed(index, speed), [
     updateAnimationSpeed,
     index
