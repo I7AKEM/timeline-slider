@@ -2,7 +2,7 @@
 // Copyright contributors to the kepler.gl project
 
 import  {useState, useCallback} from 'react';
-import styled from 'styled-components';
+import styled, {withTheme} from 'styled-components';
 import RangeBrush, {OnBrush, RangeBrushProps} from './range-brush';
 // import HistogramPlotFactory from './histogram-plot';
 // import LineChartFactory, {HoverDP} from './line-chart';
@@ -116,6 +116,8 @@ const RangePlot = ({
     ...chartProps
   };
 
+    console.log("theme", theme)
+
   return (
       <StyledRangePlot
           style={{
@@ -138,4 +140,4 @@ const RangePlot = ({
   );
 };
 
-export default RangePlot;
+export default withTheme(RangePlot);

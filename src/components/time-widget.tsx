@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright contributors to the kepler.gl project
 
-import React, {useCallback} from 'react';
+import React, {useCallback, useState} from 'react';
 // import styled from 'styled-components';
 // import {BottomWidgetInner} from '../common/styled-components';
 // import TimeRangeSliderFactory from '../common/time-range-slider';
@@ -33,9 +33,8 @@ const TimeWidget: React.FC<TimeWidgetProps> = ({
                                                  setFilterAnimationWindow,
                                                  timeline
                                                }: TimeWidgetProps) => {
-  // const [isMinified, setMinified] = useState(false);
+  const [isMinified, setMinified] = useState(false);
 
-    console.log("timeline", timeline)
 
   const _updateAnimationSpeed = useCallback((speed: number) => updateAnimationSpeed(index, speed), [
     updateAnimationSpeed,
@@ -79,7 +78,7 @@ const TimeWidget: React.FC<TimeWidgetProps> = ({
             hideTimeTitle={showTimeDisplay}
             resetAnimation={resetAnimation}
             isAnimatable={isAnimatable}
-            isMinified={false} // TODO: Delete this prop
+            isMinified={isMinified} // TODO: Delete this prop
             timeline={timeline}
         />
         {/*{showTimeDisplay ? (*/}

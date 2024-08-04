@@ -249,7 +249,6 @@ class RangeSlider extends Component<RangeSliderProps> {
                         timezone={timezone}
                         timeFormat={timeFormat}
                         playbackControlWidth={playbackControlWidth}
-                        theme={"theme"}
                     />
                 ) : null}
                 <SliderWrapper

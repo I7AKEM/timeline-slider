@@ -6,7 +6,6 @@ import {scaleLinear} from 'd3-scale';
 import {max} from 'd3-array';
 import {hcl} from 'd3-color';
 import styled from 'styled-components';
-import {HistogramBin} from "../types";
 
 const histogramStyle = {
   highlightW: 0.7,
@@ -52,6 +51,7 @@ function HistogramPlotFactory() {
     value,
     brushComponent
   }: HistogramPlotProps) => {
+    console.log("muhammad", margin, width, height)
     const undefinedToZero = (x: number | undefined) => (x ? x : 0);
     const domain = useMemo(
       () =>

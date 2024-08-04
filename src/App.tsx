@@ -1,50 +1,46 @@
 import './App.css'
 import {ThemeProvider} from "styled-components";
 import {theme} from "./styles";
-import {createRef} from "react";
+import {createRef, useEffect, useState} from "react";
 import BottomWidget from "./components/bottom-widget.tsx";
 
 
 function App() {
     const bottomWidgetRef = createRef<HTMLDivElement>();
+    const [datasets, setDatasets] = useState<any>({})
+    const [filter, setFilter] = useState<any>({})
+    const [loading, setLoading] = useState<boolean>(false)
+    useEffect(() => {
+        // fetch two files dataset and filter then change the state of loading to true
+        Promise.all([
+            fetch('./dataset.json').then(response => response.json()),
+            fetch('./filter.json').then(response => response.json())
+        ]).then(([dataset, filter]) => {
+            if (dataset && filter) {
+                setDatasets(dataset)
+                setFilter(filter)
+            }
+        })
+    }, [])
     return (
         <>
             <ThemeProvider theme={theme}>
-                <BottomWidget
-                    datasets={
-                        {
-                            datasets: {
-                                data: {
-                                    allData: [],
-                                    fields: []
-                                }
-                            }
-                        }
-                    }
+                {!loading && <BottomWidget
+                    datasets={datasets}
                     filters={[
-                        {
-                            dataId: 'data',
-                            id: 'time',
-                            name: 'time',
-                            type: 'timeRange',
-                            value: [
-                                0,
-                                100
-                            ],
-                            enlarged: false,
-                            plotType: 'histogram',
-                            yAxis: null
-                        }
+                        filter
                     ]}
                     animationConfig={
                         {
-                            currentTime: 0,
-                            speed: 1,
-                            domain: [0, 100],
-                            step: 1,
-                            isPlaying: false,
-                            width: 800,
-                            height: 800
+                            "domain": null,
+                            "currentTime": null,
+                            "speed": 1,
+                            "isAnimating": false,
+                            "timeFormat": null,
+                            "timezone": null,
+                            "defaultTimeFormat": null,
+                            "hideControl": false,
+                            "duration": null
                         }
                     }
                     visStateActions={
@@ -74,7 +70,7 @@ function App() {
                         }
                     }
                     containerW={
-                        800
+                        2029
                     }
                     uiState={
                         {
@@ -93,14 +89,14 @@ function App() {
                     }
                     layers={
                         [
-                            {
-                                config: {
-                                    animation: {
-                                        enabled: false
-                                    },
-                                    isVisible: false
-                                }
-                            }
+                            // {
+                            //     config: {
+                            //         animation: {
+                            //             enabled: false
+                            //         },
+                            //         isVisible: false
+                            //     }
+                            // }
                         ]
                     }
                     rootRef={
@@ -108,7 +104,7 @@ function App() {
                     }
                     theme={theme}
 
-                />
+                />}
             </ThemeProvider>
         </>
 
