@@ -1,18 +1,14 @@
 // SPDX-License-Identifier: MIT
 // Copyright contributors to the kepler.gl project
 
-import React, {forwardRef, useMemo, useCallback} from 'react';
+import React, {forwardRef, useMemo, useCallback, useEffect} from 'react';
 import styled, {withTheme} from 'styled-components';
 
-
-import {breakPointValues, media} from "../styles";
-import {hasPortableWidth, isSideFilter} from "../util";
+import {isSideFilter} from "../util";
 import {TimeRangeFilter} from "../types";
 import {FILTER_VIEW_TYPES} from "../constants";
 import TimeWidget from "./time-widget.tsx";
 import FilterAnimationController from "./filter-animation-controller.tsx";
-
-const maxWidth = 1080;
 
 const bottomWidgetSelector = (props: any, theme) => ({
     filters: props.visState.filters,
@@ -22,7 +18,6 @@ const bottomWidgetSelector = (props: any, theme) => ({
     animationConfig: props.visState.animationConfig,
     visStateActions: props.visStateActions,
     toggleModal: props.uiStateActions.toggleModal,
-    sidePanelWidth: props.uiState.readOnly ? 0 : props.sidePanelWidth + theme.sidePanel.margin.left
 });
 
 interface BottomWidgetContainerProps {
@@ -33,10 +28,6 @@ interface BottomWidgetContainerProps {
 const BottomWidgetContainer = styled.div<BottomWidgetContainerProps>`
     display: flex;
     flex-direction: column;
-    padding-top: ${props => (props.hasPadding ? props.theme.bottomWidgetPaddingTop : 0)}px;
-    padding-right: ${props => (props.hasPadding ? props.theme.bottomWidgetPaddingRight : 0)}px;
-    padding-bottom: ${props => (props.hasPadding ? props.theme.bottomWidgetPaddingBottom : 0)}px;
-    padding-left: ${props => (props.hasPadding ? props.theme.bottomWidgetPaddingLeft : 0)}px;
     pointer-events: none !important; /* prevent padding from blocking input */
 
     & > * {
@@ -44,9 +35,8 @@ const BottomWidgetContainer = styled.div<BottomWidgetContainerProps>`
         pointer-events: all;
     }
 
-    width: ${props => props.width}px;
+    width: 100%;
     z-index: 1;
-    ${media.portable`padding: 0;`}
 `;
 
 export type BottomWidgetProps = {
@@ -67,18 +57,14 @@ const BottomWidget: React.FC<BottomWidgetThemedProps> = (props: BottomWidgetThem
         visStateActions,
         containerW,
         uiState,
-        sidePanelWidth,
         layers,
         rootRef,
         theme
     } = props;
 
-    const {activeSidePanel, readOnly} = uiState;
-    const isOpen = Boolean(activeSidePanel);
+    const { readOnly} = uiState;
 
     const enlargedFilterIdx = useMemo(() => filters.findIndex(f => !isSideFilter(f)), [filters]);
-
-    const isMobile = hasPortableWidth(breakPointValues);
 
     const animatedFilterIdx = useMemo(() => filters.findIndex(f => f.isAnimating), [filters]);
     const animatedFilter = animatedFilterIdx > -1 ? filters[animatedFilterIdx] : null;
@@ -91,13 +77,10 @@ const BottomWidget: React.FC<BottomWidgetThemedProps> = (props: BottomWidgetThem
         theme.bottomWidgetPaddingRight
         : 0;
 
-    const enlargedFilterWidth =
-        (isOpen && !isMobile ? containerW - sidePanelWidth : containerW) - spaceForLegendWidth;
-
     // show playback control if layers contain trip layer & at least one trip layer is visible
     const animatableLayer = useMemo(
         () =>
-            layers.filter(l => l.config.animation && l.config.animation.enabled && l.config.isVisible),
+            layers.filter(l => true),
         [layers]
     );
 
@@ -120,7 +103,7 @@ const BottomWidget: React.FC<BottomWidgetThemedProps> = (props: BottomWidgetThem
 
     return (
         <BottomWidgetContainer
-            width={Math.min(maxWidth, enlargedFilterWidth)}
+            width={containerW}
             style={{marginRight: spaceForLegendWidth}}
             className="bottom-widget--container"
             hasPadding={showAnimationControl || showTimeWidget}
@@ -157,7 +140,7 @@ const BottomWidget: React.FC<BottomWidgetThemedProps> = (props: BottomWidgetThem
                                 // even though it doesnt use it, to force rerender
                                 filter={filters[enlargedFilterIdx] as TimeRangeFilter}
                                 index={enlargedFilterIdx}
-                                datasets={datasets}
+                                datasets={{}}
                                 readOnly={readOnly}
                                 showTimeDisplay={showFloatingTimeDisplay}
                                 setFilterPlot={visStateActions.setFilterPlot}

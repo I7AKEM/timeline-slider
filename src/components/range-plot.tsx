@@ -116,8 +116,6 @@ const RangePlot = ({
     ...chartProps
   };
 
-    console.log("theme", theme)
-
   return (
       <StyledRangePlot
           style={{

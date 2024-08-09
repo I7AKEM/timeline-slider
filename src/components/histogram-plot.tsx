@@ -51,7 +51,6 @@ function HistogramPlotFactory() {
     value,
     brushComponent
   }: HistogramPlotProps) => {
-    console.log("muhammad", margin, width, height)
     const undefinedToZero = (x: number | undefined) => (x ? x : 0);
     const domain = useMemo(
       () =>

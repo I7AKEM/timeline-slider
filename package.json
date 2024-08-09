@@ -34,6 +34,7 @@
     "react-lifecycles-compat": "^3.0.4",
     "react-time-picker": "^7.0.0",
     "react-tooltip": "^5.27.1",
+    "react-virtualized": "^9.22.5",
     "react-vis": "^1.12.1",
     "reselect": "^5.1.1",
     "resize-observer-polyfill": "^1.5.1",

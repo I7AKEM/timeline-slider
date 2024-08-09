@@ -10,6 +10,8 @@ import RangeSlider from "./range-slider.tsx";
 
 // import RangeSliderFactory from './range-slider';
 import TimeSliderMarkerFactory from './time-slider-marker';
+import AnimationControl from "./animation-control/animation-control.tsx";
+import PlaybackControls from "./animation-control/playback-controls.tsx";
 // import PlaybackControlsFactory from './animation-control/playback-controls';
 // import TimeRangeSliderTimeTitleFactory from './time-range-slider-time-title';
 // import AnimationControlFactory from './animation-control/animation-control';
@@ -49,7 +51,7 @@ const StyledSliderContainer = styled.div<StyledSliderContainerProps>`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding-left: ${props => (props.isEnlarged ? 24 : 0)}px;
+  padding-left: 24px;
 
   .timeline-container .kg-slider {
     display: none;
@@ -130,34 +132,33 @@ const TimeRangeSlider: React.FC<TimeRangeSliderProps> = props => {
                 />
               </div>
           ) : (
-              <></>
-              // <AnimationControl
-              //     style={ANIMATION_CONTROL_STYLE}
-              //     isAnimatable={isAnimatable}
-              //     isAnimating={isAnimating}
-              //     resetAnimation={resetAnimation}
-              //     toggleAnimation={toggleAnimation}
-              //     updateAnimationSpeed={updateAnimationSpeed}
-              //     setTimelineValue={throttledOnchange}
-              //     setAnimationWindow={setFilterAnimationWindow}
-              //     showTimeDisplay={false}
-              //     timeline={timeline}
-              // />
+              <AnimationControl
+                  style={ANIMATION_CONTROL_STYLE}
+                  isAnimatable={isAnimatable}
+                  isAnimating={isAnimating}
+                  resetAnimation={resetAnimation}
+                  toggleAnimation={toggleAnimation}
+                  updateAnimationSpeed={updateAnimationSpeed}
+                  setTimelineValue={throttledOnchange}
+                  setAnimationWindow={setFilterAnimationWindow}
+                  showTimeDisplay={false}
+                  timeline={timeline}
+              />
           )}
           {isEnlarged && !isMinified ? (
-              <></>
-              // <PlaybackControls
-              //     isAnimatable={isAnimatable}
-              //     width={animationControlWidth}
-              //     speed={speed}
-              //     animationWindow={animationWindow}
-              //     updateAnimationSpeed={updateAnimationSpeed}
-              //     setFilterAnimationWindow={setFilterAnimationWindow}
-              //     pauseAnimation={toggleAnimation}
-              //     resetAnimation={resetAnimation}
-              //     isAnimating={isAnimating}
-              //     startAnimation={toggleAnimation}
-              // />
+              // <></>
+              <PlaybackControls
+                  isAnimatable={isAnimatable}
+                  width={animationControlWidth}
+                  speed={speed}
+                  animationWindow={animationWindow}
+                  updateAnimationSpeed={updateAnimationSpeed}
+                  setFilterAnimationWindow={setFilterAnimationWindow}
+                  pauseAnimation={toggleAnimation}
+                  resetAnimation={resetAnimation}
+                  isAnimating={isAnimating}
+                  startAnimation={toggleAnimation}
+              />
           ) : null}
         </StyledSliderContainer>
       </div>

@@ -685,14 +685,7 @@ export const BottomWidgetInner = styled.div`
   background-color: ${props => props.theme.bottomWidgetBgd};
   padding: ${props => `${props.theme.bottomInnerPdVert}px ${props.theme.bottomInnerPdSide}px`};
   position: relative;
-  margin-top: ${props => props.theme.bottomPanelGap}px;
-
-  ${media.portable`
-    border-top: 1px solid ${props => props.theme.panelBorderColor};
-    border-left: 1px solid ${props => props.theme.panelBorderColor};
-    padding: 12px 12px;
-    margin-top: 0;
-  `}
+  //margin-top: ${props => props.theme.bottomPanelGap}px;
 `;
 
 interface MapControlButtonProps {

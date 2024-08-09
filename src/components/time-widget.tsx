@@ -12,6 +12,7 @@ import {TimeWidgetProps} from './types';
 import TimeRangeSlider from "./time-range-slider.tsx";
 import {BottomWidgetInner} from "./styled-components.tsx";
 import styled from "styled-components";
+import FloatingTimeDisplayFactory from './animation-control/floating-time-display.tsx';
 
 const TimeBottomWidgetInner = styled(BottomWidgetInner)`
   padding: 6px 32px 24px 32px;
@@ -34,6 +35,7 @@ const TimeWidget: React.FC<TimeWidgetProps> = ({
                                                  timeline
                                                }: TimeWidgetProps) => {
   const [isMinified, setMinified] = useState(false);
+  const [value, setValue] = useState(filter.value);
 
 
   const _updateAnimationSpeed = useCallback((speed: number) => updateAnimationSpeed(index, speed), [
@@ -50,10 +52,14 @@ const TimeWidget: React.FC<TimeWidgetProps> = ({
       [setFilterAnimationWindow, filter.id]
   );
 
-  const timeSliderOnChange = useCallback((value: number[]) => setFilterAnimationTime(index, 'value', value), [
+  const timeSliderOnChange = useCallback((value: number[]) => {
+      setValue(value);
+  }, [
     setFilterAnimationTime,
     index
   ]);
+
+  const FloatingTimeDisplay = FloatingTimeDisplayFactory()
 
   return (
       <TimeBottomWidgetInner className="bottom-widget--inner">
@@ -80,15 +86,16 @@ const TimeWidget: React.FC<TimeWidgetProps> = ({
             isAnimatable={isAnimatable}
             isMinified={isMinified} // TODO: Delete this prop
             timeline={timeline}
+            value={value}
         />
-        {/*{showTimeDisplay ? (*/}
-        {/*    <FloatingTimeDisplay*/}
-        {/*        currentTime={filter.value}*/}
-        {/*        defaultTimeFormat={filter.defaultTimeFormat}*/}
-        {/*        timeFormat={filter.timeFormat}*/}
-        {/*        timezone={filter.timezone}*/}
-        {/*    />*/}
-        {/*) : null}*/}
+        {showTimeDisplay ? (
+            <FloatingTimeDisplay
+                currentTime={value}
+                defaultTimeFormat={filter.defaultTimeFormat}
+                timeFormat={filter.timeFormat}
+                timezone={filter.timezone}
+            />
+        ) : null}
       </TimeBottomWidgetInner>
   );
 };
