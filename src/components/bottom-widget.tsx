@@ -10,14 +10,13 @@ import {FILTER_VIEW_TYPES} from "../constants";
 import TimeWidget from "./time-widget.tsx";
 import FilterAnimationController from "./filter-animation-controller.tsx";
 
-const bottomWidgetSelector = (props: any, theme) => ({
-    filters: props.visState.filters,
-    datasets: props.visState.datasets,
-    uiState: props.uiState,
-    layers: props.visState.layers,
-    animationConfig: props.visState.animationConfig,
-    visStateActions: props.visStateActions,
-    toggleModal: props.uiStateActions.toggleModal,
+const bottomWidgetSelector = (props: any) => ({
+    filters: props.filters,
+    datasets: props.datasets,
+    // uiState: props.uiState,
+    // layers: props.visState.layers,
+    // animationConfig: props.visState.animationConfig,
+    // visStateActions: props.visStateActions,
 });
 
 interface BottomWidgetContainerProps {
@@ -39,10 +38,7 @@ const BottomWidgetContainer = styled.div<BottomWidgetContainerProps>`
     z-index: 1;
 `;
 
-export type BottomWidgetProps = {
-    rootRef: React.ForwardedRef<HTMLDivElement>;
-    containerW: number;
-} & ReturnType<typeof bottomWidgetSelector>;
+export type BottomWidgetProps = ReturnType<typeof bottomWidgetSelector>;
 type ThemeProp = {
     theme: Record<string, any>;
 };
@@ -53,24 +49,21 @@ const BottomWidget: React.FC<BottomWidgetThemedProps> = (props: BottomWidgetThem
     const {
         datasets,
         filters,
-        animationConfig,
-        visStateActions,
-        containerW,
-        uiState,
-        layers,
-        rootRef,
+        // animationConfig,
+        // visStateActions,
+        // containerW,
+        // layers,
+        // rootRef,
         theme
     } = props;
 
-    const { readOnly} = uiState;
 
     const enlargedFilterIdx = useMemo(() => filters.findIndex(f => !isSideFilter(f)), [filters]);
 
     const animatedFilterIdx = useMemo(() => filters.findIndex(f => f.isAnimating), [filters]);
     const animatedFilter = animatedFilterIdx > -1 ? filters[animatedFilterIdx] : null;
 
-    const isLegendPinned =
-        uiState.mapControls?.mapLegend?.show && uiState.mapControls?.mapLegend?.active;
+    const isLegendPinned = true;
     const spaceForLegendWidth = isLegendPinned
         ? theme.mapControl?.width +
         theme.mapControl?.mapLegend?.pinned?.right * 2 -
@@ -78,36 +71,39 @@ const BottomWidget: React.FC<BottomWidgetThemedProps> = (props: BottomWidgetThem
         : 0;
 
     // show playback control if layers contain trip layer & at least one trip layer is visible
-    const animatableLayer = useMemo(
-        () =>
-            layers.filter(l => true),
-        [layers]
-    );
+    // const animatableLayer = useMemo(
+    //     () =>
+    //         layers.filter(l => true),
+    //     [layers]
+    // );
 
-    const readyToAnimation =
-        Array.isArray(animationConfig.domain) && Number.isFinite(animationConfig.currentTime);
+    // const readyToAnimation =
+    //     Array.isArray(animationConfig.domain) && Number.isFinite(animationConfig.currentTime);
     // if animation control is showing, hide time display in time slider
-    const showFloatingTimeDisplay = !animatableLayer.length;
-    const showAnimationControl =
-        animatableLayer.length && readyToAnimation && !animationConfig.hideControl;
-    const showTimeWidget = enlargedFilterIdx > -1 && Object.keys(datasets).length > 0;
+    // const showFloatingTimeDisplay = !animatableLayer.length;
+    // const showAnimationControl =
+    //     animatableLayer.length && readyToAnimation && !animationConfig.hideControl;
+    const showTimeWidget = filters[0]?.mappedValue?.length > 0;
 
     // if filter is not animating, pass in enlarged filter here because
     // animation controller needs to call reset on it
     const filter = (animatedFilter as TimeRangeFilter) || filters[enlargedFilterIdx];
 
-    const onClose = useCallback(
-        () => visStateActions.setFilterView(enlargedFilterIdx, FILTER_VIEW_TYPES.side),
-        [visStateActions, enlargedFilterIdx]
-    );
+    // const onClose = useCallback(
+    //     () => visStateActions.setFilterView(enlargedFilterIdx, FILTER_VIEW_TYPES.side),
+    //     [visStateActions, enlargedFilterIdx]
+    // );
 
     return (
         <BottomWidgetContainer
-            width={containerW}
+            // width={containerW}
             style={{marginRight: spaceForLegendWidth}}
             className="bottom-widget--container"
-            hasPadding={showAnimationControl || showTimeWidget}
-            ref={rootRef}
+            hasPadding={
+                // showAnimationControl || showTimeWidget
+                false
+            }
+            // ref={rootRef}
         >
             {/*<LayerAnimationController*/}
             {/*  animationConfig={animationConfig}*/}
@@ -131,7 +127,10 @@ const BottomWidget: React.FC<BottomWidgetThemedProps> = (props: BottomWidgetThem
                 <FilterAnimationController
                     filter={filter}
                     filterIdx={animatedFilterIdx > -1 ? animatedFilterIdx : enlargedFilterIdx}
-                    setFilterAnimationTime={visStateActions.setFilterAnimationTime}
+                    setFilterAnimationTime={
+                    // visStateActions.setFilterAnimationTime
+                        () => {}
+                }
                 >
                     {(isAnimating, start, pause, resetAnimation, timeline, setTimelineValue) =>
                         showTimeWidget && timeline ? (
@@ -141,17 +140,35 @@ const BottomWidget: React.FC<BottomWidgetThemedProps> = (props: BottomWidgetThem
                                 filter={filters[enlargedFilterIdx] as TimeRangeFilter}
                                 index={enlargedFilterIdx}
                                 datasets={{}}
-                                readOnly={readOnly}
-                                showTimeDisplay={showFloatingTimeDisplay}
-                                setFilterPlot={visStateActions.setFilterPlot}
+                                readOnly={true}
+                                showTimeDisplay={
+                                    // showFloatingTimeDisplay
+                                    false
+                                }
+                                setFilterPlot={
+                                    // visStateActions.setFilterPlot
+                                    () => {}
+                                }
                                 setFilterAnimationTime={setTimelineValue}
-                                setFilterAnimationWindow={visStateActions.setFilterAnimationWindow}
-                                toggleAnimation={visStateActions.toggleFilterAnimation}
-                                updateAnimationSpeed={visStateActions.updateFilterAnimationSpeed}
+                                setFilterAnimationWindow={
+                                    // visStateActions.setFilterAnimationWindow
+                                    () => {}
+                                }
+                                toggleAnimation={
+                                    // visStateActions.toggleFilterAnimation
+                                    () => {}
+                                }
+                                updateAnimationSpeed={
+                                    // visStateActions.updateFilterAnimationSpeed
+                                    () => {}
+                                }
                                 resetAnimation={resetAnimation}
-                                isAnimatable={!animationConfig || !animationConfig.isAnimating}
-                                onClose={onClose}
+                                isAnimatable={
+                                    // !animationConfig || !animationConfig.isAnimating
+                                    false
+                                }
                                 timeline={timeline}
+                                onClose={() => {}}
                             />
                         ) : null
                     }

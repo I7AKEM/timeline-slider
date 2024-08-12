@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright contributors to the kepler.gl project
 
-// import {ascending, extent, histogram as d3Histogram, ticks} from 'd3-array';
+import {ascending, extent, histogram as d3Histogram, ticks} from 'd3-array';
 // import keyMirror from 'keymirror';
 // import Console from 'global/console';
 // import get from 'lodash.get';
@@ -19,7 +19,7 @@
 //   FILTER_VIEW_TYPES
 // } from '@kepler.gl/constants';
 // import {VisState} from '@kepler.gl/schemas';
-// import * as ScaleUtils from './data-scale-utils';
+import * as ScaleUtils from './data-scale-utils';
 // import {h3IsValid} from 'h3-js';
 //
 // import {
@@ -42,17 +42,17 @@
 //   FilterRecord
 // } from '@kepler.gl/types';
 //
-// import {DataContainerInterface} from './data-container-interface';
+import {DataContainerInterface} from './data-container-interface';
 // import {generateHashId, set, toArray} from './utils';
 // import {notNullorUndefined, timeToUnixMilli, unique} from './data-utils';
 // import {getCentroid} from './h3-utils';
-//
-// export const durationSecond = 1000;
-// export const durationMinute = durationSecond * 60;
-// export const durationHour = durationMinute * 60;
-// export const durationDay = durationHour * 24;
-// export const durationWeek = durationDay * 7;
-// export const durationYear = durationDay * 365;
+
+export const durationSecond = 1000;
+export const durationMinute = durationSecond * 60;
+export const durationHour = durationMinute * 60;
+export const durationDay = durationHour * 24;
+export const durationWeek = durationDay * 7;
+export const durationYear = durationDay * 365;
 //
 // export type FilterResult = {
 //   filteredIndexForDomain?: number[];
@@ -66,20 +66,20 @@
 //   } | null;
 // };
 //
-// export type dataValueAccessor = (data: {index: number}) => number | null;
+export type dataValueAccessor = (data: {index: number}) => number | null;
 //
-// export const TimestampStepMap = [
-//   {max: 1, step: 0.05},
-//   {max: 10, step: 0.1},
-//   {max: 100, step: 1},
-//   {max: 500, step: 5},
-//   {max: 1000, step: 10},
-//   {max: 5000, step: 50},
-//   {max: Number.POSITIVE_INFINITY, step: 1000}
-// ];
-//
-// export const histogramBins = 30;
-// export const enlargedHistogramBins = 100;
+export const TimestampStepMap = [
+  {max: 1, step: 0.05},
+  {max: 10, step: 0.1},
+  {max: 100, step: 1},
+  {max: 500, step: 5},
+  {max: 1000, step: 10},
+  {max: 5000, step: 50},
+  {max: Number.POSITIVE_INFINITY, step: 1000}
+];
+
+export const histogramBins = 30;
+export const enlargedHistogramBins = 100;
 //
 // export const FILTER_UPDATER_PROPS = keyMirror({
 //   dataId: null,
@@ -727,68 +727,68 @@
 // /**
 //  * Calculate timestamp domain and suitable step
 //  */
-// export function getTimestampFieldDomain(
-//   dataContainer: DataContainerInterface,
-//   valueAccessor: dataValueAccessor
-// ): TimeRangeFieldDomain {
-//   // to avoid converting string format time to epoch
-//   // every time we compare we store a value mapped to int in filter domain
+export function getTimestampFieldDomain(
+  dataContainer: DataContainerInterface,
+  valueAccessor: dataValueAccessor
+): TimeRangeFieldDomain {
+  // to avoid converting string format time to epoch
+  // every time we compare we store a value mapped to int in filter domain
+
+  const mappedValue = dataContainer.mapIndex(valueAccessor);
+  const domain = ScaleUtils.getLinearDomain(mappedValue);
+  const defaultTimeFormat = getTimeWidgetTitleFormatter(domain);
+
+  let step = 0.01;
+
+  const diff = domain[1] - domain[0];
+  // in case equal timestamp add 1 second padding to prevent break
+  if (!diff) {
+    domain[1] = domain[0] + 1000;
+  }
+  const entry = TimestampStepMap.find(f => f.max >= diff);
+  if (entry) {
+    step = entry.step;
+  }
+
+  const {histogram, enlargedHistogram} = getHistogram(domain, mappedValue);
+
+  return {
+    domain,
+    step,
+    mappedValue,
+    histogram,
+    enlargedHistogram,
+    defaultTimeFormat
+  };
+}
 //
-//   const mappedValue = dataContainer.mapIndex(valueAccessor);
-//   const domain = ScaleUtils.getLinearDomain(mappedValue);
-//   const defaultTimeFormat = getTimeWidgetTitleFormatter(domain);
-//
-//   let step = 0.01;
-//
-//   const diff = domain[1] - domain[0];
-//   // in case equal timestamp add 1 second padding to prevent break
-//   if (!diff) {
-//     domain[1] = domain[0] + 1000;
-//   }
-//   const entry = TimestampStepMap.find(f => f.max >= diff);
-//   if (entry) {
-//     step = entry.step;
-//   }
-//
-//   const {histogram, enlargedHistogram} = getHistogram(domain, mappedValue);
-//
-//   return {
-//     domain,
-//     step,
-//     mappedValue,
-//     histogram,
-//     enlargedHistogram,
-//     defaultTimeFormat
-//   };
-// }
-//
-// export function histogramConstruct(
-//   domain: [number, number],
-//   mappedValue: (Millisecond | number)[],
-//   bins: number
-// ): HistogramBin[] {
-//   return d3Histogram()
-//     .thresholds(ticks(domain[0], domain[1], bins))
-//     .domain(domain)(mappedValue)
-//     .map(bin => ({
-//       count: bin.length,
-//       bin,
-//       x0: bin.x0,
-//       x1: bin.x1
-//     }));
-// }
+export function histogramConstruct(
+  domain: [number, number],
+  mappedValue: (Millisecond | number)[],
+  bins: number
+): HistogramBin[] {
+  return d3Histogram()
+    .thresholds(ticks(domain[0], domain[1], bins))
+    .domain(domain)(mappedValue)
+    .map(bin => ({
+      count: bin.length,
+      bin,
+      x0: bin.x0,
+      x1: bin.x1
+    }));
+}
 // /**
 //  * Calculate histogram from domain and array of values
 //  */
-// export function getHistogram(
-//   domain: [number, number],
-//   mappedValue: (Millisecond | number)[]
-// ): {histogram: HistogramBin[]; enlargedHistogram: HistogramBin[]} {
-//   const histogram = histogramConstruct(domain, mappedValue, histogramBins);
-//   const enlargedHistogram = histogramConstruct(domain, mappedValue, enlargedHistogramBins);
-//
-//   return {histogram, enlargedHistogram};
-// }
+export function getHistogram(
+  domain: [number, number],
+  mappedValue: (Millisecond | number)[]
+): {histogram: HistogramBin[]; enlargedHistogram: HistogramBin[]} {
+  const histogram = histogramConstruct(domain, mappedValue, histogramBins);
+  const enlargedHistogram = histogramConstruct(domain, mappedValue, enlargedHistogramBins);
+
+  return {histogram, enlargedHistogram};
+}
 //
 // /**
 //  * round number based on step
@@ -824,17 +824,17 @@
 // export function isInPolygon(point: number[], polygon: any): boolean {
 //   return booleanWithin(turfPoint(point), polygon);
 // }
-// export function getTimeWidgetTitleFormatter(domain: [number, number]): string | null {
-//   if (!isValidTimeDomain(domain)) {
-//     return null;
-//   }
-//
-//   const diff = domain[1] - domain[0];
-//
-//   // Local aware formats
-//   // https://momentjs.com/docs/#/parsing/string-format
-//   return diff > durationYear ? 'L' : diff > durationDay ? 'L LT' : 'L LTS';
-// }
+export function getTimeWidgetTitleFormatter(domain: [number, number]): string | null {
+  if (!isValidTimeDomain(domain)) {
+    return null;
+  }
+
+  const diff = domain[1] - domain[0];
+
+  // Local aware formats
+  // https://momentjs.com/docs/#/parsing/string-format
+  return diff > durationYear ? 'L' : diff > durationDay ? 'L LT' : 'L LTS';
+}
 //
 // /**
 //  * Sanity check on filters to prepare for save
@@ -1263,9 +1263,9 @@ export function getIntervalBins(filter: TimeRangeFilter) {
   return values[0] ? values[0][interval] : null;
 }
 //
-// export function isValidTimeDomain(domain) {
-//   return Array.isArray(domain) && domain.every(Number.isFinite);
-// }
+export function isValidTimeDomain(domain) {
+  return Array.isArray(domain) && domain.every(Number.isFinite);
+}
 //
 // export function getTimeWidgetHintFormatter(domain: [number, number]): string | undefined {
 //   if (!isValidTimeDomain(domain)) {
@@ -1283,7 +1283,7 @@ export function getIntervalBins(filter: TimeRangeFilter) {
 // }
 
 import {FILTER_VIEW_TYPES} from "../constants";
-import {Filter, TimeRangeFilter} from "../types";
+import {Filter, HistogramBin, Millisecond, TimeRangeFieldDomain, TimeRangeFilter} from "../types";
 
 export function isSideFilter(filter: Filter): boolean {
   return filter.view === FILTER_VIEW_TYPES.side;

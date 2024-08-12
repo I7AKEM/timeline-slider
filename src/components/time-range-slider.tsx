@@ -117,8 +117,8 @@ const TimeRangeSlider: React.FC<TimeRangeSliderProps> = props => {
               <div className="timeline-container" style={style}>
                 <RangeSlider
                     range={domain}
-                    value0={value[0]}
-                    value1={value[1]}
+                    value0={value ? value[0] : 0}
+                    value1={value ? value[1] : 0}
                     histogram={histogram}
                     lineChart={lineChart}
                     plotType={plotType}
