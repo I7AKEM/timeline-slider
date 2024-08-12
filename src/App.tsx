@@ -108,7 +108,6 @@ function App() {
         <>
             <ThemeProvider theme={theme}>
                 {!loading && <BottomWidget
-                    datasets={data}
                     filters={[
                         filter
                     ]}
