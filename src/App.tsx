@@ -1,5 +1,5 @@
 import './App.css'
-import {ThemeProvider} from "styled-components";
+import styled, {ThemeProvider} from "styled-components";
 import {theme} from "./styles";
 import {useEffect, useState} from "react";
 import BottomWidget from "./components/bottom-widget.tsx";
@@ -7,6 +7,8 @@ import {DataContainerInterface, getFieldValueAccessor, getTimestampFieldDomain} 
 import Papa from "papaparse"
 import {RowDataContainer} from "./util/row-data-container.ts";
 import {Field} from "./types";
+import HistogramPlotFactory from "./components/histogram-plot.tsx";
+import {BottomWidgetInner} from "./components/styled-components.tsx";
 
 
 function App() {
@@ -14,6 +16,7 @@ function App() {
     const [loading, setLoading] = useState<boolean>(false)
     const [data, setData] = useState<any>([])
     let fields: Field[] = []
+    const HistogramPlot = HistogramPlotFactory();
     useEffect(() => {
         // fetch two files dataset and filter then change the state of loading to true
         Promise.all([
@@ -53,7 +56,7 @@ function App() {
     useEffect(() => {
         if (data.length) {
             const dc = convertDataToDataContainer(data)
-            console.log()
+            console.log("data", data)
             // convert data to DataContainerInterface
             let domain = getTimestampFieldDomain(
                 dc,
@@ -69,6 +72,7 @@ function App() {
 
     const convertDataToDataContainer = (data: any) => {
         const fields = getFieldsFromRawData(data)
+        data.splice(0, 1)
         const dc: DataContainerInterface = new RowDataContainer({
             rows: data,
             fields: fields
@@ -95,7 +99,8 @@ function App() {
                     fieldIdx: i,
                     id: firstRow[i] || `${i}`,
                     displayName: firstRow[i] || "",
-                    valueAccessor() {}
+                    valueAccessor() {
+                    }
                 }
                 // field.valueAccessor = getFieldValueAccessor(field, i, dc)
                 fields.push(field)
@@ -104,15 +109,59 @@ function App() {
         return fields
     }
 
+    const FilterContainer = styled(BottomWidgetInner)`
+        padding: 6px 32px 24px 32px;
+    `;
+
+    const StyledSliderContainer = styled.div`
+        align-items: flex-end;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-left: 24px;
+
+        .timeline-container .kg-slider {
+            display: none;
+        }
+
+        .playback-controls {
+            margin-left: 22px;
+        }
+    `;
+
+
     return (
         <>
             <ThemeProvider theme={theme}>
-                {!loading && <BottomWidget
-                    filters={[
-                        filter
-                    ]}
+                {
+                    !loading && <>
+                        <BottomWidget
+                            filters={[
+                                filter
+                            ]}
+                        />
+                        <FilterContainer className={"bottom-widget--inner"}>
+                            <div className={"time-range-slider"}>
+                                <StyledSliderContainer className={"time-range-slider__container"}>
+                                    <div className="timeline-container" style={{
+                                        width: `calc(100% - ${176}px)`
+                                    }}>
+                                        <HistogramPlot
+                                            width={520}
+                                            height={102}
+                                            margin={{top: 20, bottom: 20, left: 20, right: 20}}
+                                            isRanged={true}
+                                            histogram={filter?.enlargedHistogram || []}
+                                            value={filter.value}
+                                            brushComponent={null}
+                                        />
+                                    </div>
+                                </StyledSliderContainer>
+                            </div>
+                        </FilterContainer>
 
-                />}
+                    </>
+                }
             </ThemeProvider>
         </>
 

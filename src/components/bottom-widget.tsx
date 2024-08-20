@@ -64,13 +64,7 @@ const BottomWidget: React.FC<BottomWidgetThemedProps> = (props: BottomWidgetThem
 
 
     return (
-        <BottomWidgetContainer
-            style={{marginRight: spaceForLegendWidth}}
-            className="bottom-widget--container"
-            hasPadding={
-                false
-            }
-        >
+        <>
             {filter ? (
                 <FilterAnimationController
                     filter={filter}
@@ -116,7 +110,7 @@ const BottomWidget: React.FC<BottomWidgetThemedProps> = (props: BottomWidgetThem
                     }
                 </FilterAnimationController>
             ) : null}
-        </BottomWidgetContainer>
+        </>
     );
 };
 
